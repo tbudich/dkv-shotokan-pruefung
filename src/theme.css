@@ -655,7 +655,7 @@ button {
 .gradenav-btn .arrow {
   font-size: 1.3rem;
   line-height: 1;
-  color: var(--accent);
+  color: inherit;
   flex: none;
 }
 
