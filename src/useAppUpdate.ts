@@ -3,6 +3,10 @@ import { useRegisterSW } from 'virtual:pwa-register/react'
 
 export type UpdateStatus = 'idle' | 'checking' | 'available' | 'current' | 'error'
 
+// The periodic update check is app-global; guard so repeated mounts of the
+// settings page don't stack multiple intervals.
+let periodicCheckStarted = false
+
 /**
  * Owns the PWA update flow for the settings UI. `checkForUpdate` actively asks
  * the service worker to look for a new version; `applyUpdate` activates a waiting
@@ -23,7 +27,8 @@ export function useAppUpdate(): {
     onRegisteredSW(_swUrl, r) {
       registrationRef.current = r
       // Periodic background check: surfaces an update without a manual tap.
-      if (r) {
+      if (r && !periodicCheckStarted) {
+        periodicCheckStarted = true
         setInterval(() => {
           void r.update()
         }, 60 * 60 * 1000)
@@ -51,12 +56,17 @@ export function useAppUpdate(): {
       .then(() => {
         const sw = reg.installing
         if (sw) {
-          // A new worker is downloading; resolve once it finishes installing.
-          sw.addEventListener('statechange', () => {
+          // A new worker is downloading; resolve once it reaches a terminal state.
+          const onStateChange = () => {
             if (sw.state === 'installed') {
               setStatus(navigator.serviceWorker.controller ? 'available' : 'current')
+              sw.removeEventListener('statechange', onStateChange)
+            } else if (sw.state === 'redundant') {
+              setStatus('error')
+              sw.removeEventListener('statechange', onStateChange)
             }
-          })
+          }
+          sw.addEventListener('statechange', onStateChange)
           return
         }
         setStatus(reg.waiting ? 'available' : 'current')
