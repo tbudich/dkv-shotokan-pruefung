@@ -1,0 +1,655 @@
+:root {
+  --accent: #b91c1c;
+  --accent-contrast: #ffffff;
+
+  --bg: #f4f5f7;
+  --bg-elev: #ffffff;
+  --bg-sunken: #eceef1;
+  --fg: #15181d;
+  --fg-muted: #5b6470;
+  --border: #dde1e6;
+  --shadow: 0 1px 3px rgba(15, 17, 21, 0.08), 0 1px 2px rgba(15, 17, 21, 0.04);
+
+  --tab-h: 60px;
+  --radius: 14px;
+  --maxw: 900px;
+
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --accent: #ef4444;
+  --accent-contrast: #ffffff;
+
+  --bg: #0f1115;
+  --bg-elev: #171a21;
+  --bg-sunken: #1f232c;
+  --fg: #e7eaee;
+  --fg-muted: #9aa3af;
+  --border: #2a2f3a;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.45;
+  overscroll-behavior-y: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+/* ---------- App shell ---------- */
+.app {
+  min-height: 100dvh;
+  padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom));
+}
+
+.appbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  padding: calc(env(safe-area-inset-top) + 12px) 16px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow);
+}
+
+.appbar h1 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.2px;
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.appbar .subtitle {
+  font-size: 0.72rem;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.appbar .back {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: inherit;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.theme-toggle {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: inherit;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 1.05rem;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.content {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* ---------- Bottom tab bar ---------- */
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  height: calc(var(--tab-h) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--bg-elev);
+  border-top: 1px solid var(--border);
+  display: flex;
+}
+
+.tabbar a {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--fg-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.tabbar a.active {
+  color: var(--accent);
+}
+
+.tabbar .ico {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+/* ---------- Search ---------- */
+.search {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.search input {
+  width: 100%;
+  padding: 12px 14px 12px 40px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+  color: var(--fg);
+  font-size: 1rem;
+}
+
+.search input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.search .glass {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ---------- Grade list ---------- */
+.section-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--fg-muted);
+  margin: 22px 4px 10px;
+}
+
+.grade-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 620px) {
+  .grade-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.grade-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: var(--shadow);
+  transition: transform 0.08s ease;
+}
+
+.grade-card:active {
+  transform: scale(0.985);
+}
+
+.belt {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.belt.outline {
+  border: 1.5px solid var(--border);
+  color: #15181d;
+  text-shadow: none;
+}
+
+.belt .knot {
+  position: absolute;
+  bottom: 6px;
+  width: 70%;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.grade-card .meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.grade-card .meta .title {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.grade-card .meta .belt-name {
+  font-size: 0.82rem;
+  color: var(--fg-muted);
+}
+
+.grade-card .chev {
+  color: var(--fg-muted);
+  font-size: 1.2rem;
+  flex: none;
+}
+
+/* ---------- Detail ---------- */
+.detail-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 6px;
+}
+
+.detail-head .belt {
+  width: 54px;
+  height: 54px;
+}
+
+.detail-head h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.detail-head .belt-name {
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+}
+
+.card {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-top: 16px;
+  overflow: hidden;
+}
+
+.card > h3 {
+  margin: 0;
+  padding: 14px 16px;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-sunken);
+}
+
+.card > h3 .badge {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--fg-muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 9px;
+}
+
+.card-body {
+  padding: 6px 16px 14px;
+}
+
+.note {
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  padding: 10px 16px 0;
+}
+
+.note.inset {
+  padding: 10px 0 0;
+}
+
+/* Kihon table (number · technique steps · repetitions) */
+.kihon-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.kihon-table th {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--fg-muted);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  padding: 6px 4px;
+}
+
+.kihon-table th.c-no,
+.kihon-table td.c-no {
+  width: 26px;
+  white-space: nowrap;
+}
+
+.kihon-table th.c-rep,
+.kihon-table td.c-rep {
+  width: 44px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.kihon-table td {
+  padding: 6px 4px;
+  vertical-align: top;
+}
+
+.kihon-table tr.combo-start td {
+  border-top: 1px solid var(--border);
+}
+
+.kihon-table thead tr.combo-start td {
+  border-top: none;
+}
+
+.kihon-table .c-no {
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.rep {
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: var(--accent);
+  background: var(--bg-sunken);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1px 6px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.rep.rep-default {
+  color: var(--fg-muted);
+  background: transparent;
+  border-color: transparent;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.stance {
+  flex: none;
+  font-weight: 700;
+  font-size: 0.72rem;
+  background: var(--bg-sunken);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1px 6px;
+  align-self: flex-start;
+  margin-top: 1px;
+  white-space: nowrap;
+}
+
+/* A combination renders as a vertical sequence of steps inside the Technik cell */
+.step {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 1px 0;
+}
+
+.step .txt {
+  flex: 1;
+}
+
+.combo-note {
+  font-size: 0.8rem;
+  color: var(--fg-muted);
+  font-style: italic;
+  padding-top: 2px;
+}
+
+.stepdir {
+  flex: none;
+  font-weight: 800;
+  font-size: 1rem;
+  line-height: 1.3;
+  align-self: flex-start;
+  margin-top: 1px;
+  width: 1.1em;
+  text-align: center;
+  color: var(--fg-muted);
+}
+
+.stepdir.none {
+  color: var(--fg-muted);
+  opacity: 0.55;
+}
+
+.stepdir.vor {
+  color: #16a34a;
+}
+
+.stepdir.zurück {
+  color: #b91c1c;
+}
+
+.stepdir.seit {
+  color: #2563eb;
+}
+
+[data-theme='dark'] .stepdir.vor {
+  color: #4ade80;
+}
+
+[data-theme='dark'] .stepdir.zurück {
+  color: #f87171;
+}
+
+[data-theme='dark'] .stepdir.seit {
+  color: #60a5fa;
+}
+
+/* Kata / generic chips & text */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.chip {
+  background: var(--bg-sunken);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.kv {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.kv:last-child {
+  border-bottom: none;
+}
+
+.kv .k {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+
+.bodytext {
+  margin: 6px 0;
+}
+
+/* Kumite as stacked cards (mobile-first) */
+.kumite-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+.kumite-row {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.kumite-row .aspect {
+  background: var(--bg-sunken);
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 6px 12px;
+  color: var(--fg-muted);
+}
+
+.kumite-row .pair {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 520px) {
+  .kumite-row .pair {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.kumite-row .cell {
+  padding: 9px 12px;
+  font-size: 0.92rem;
+}
+
+.kumite-row .cell + .cell {
+  border-top: 1px solid var(--border);
+}
+
+@media (min-width: 520px) {
+  .kumite-row .cell + .cell {
+    border-top: none;
+    border-left: 1px solid var(--border);
+  }
+}
+
+.kumite-row .role {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 2px;
+}
+
+.kumite-row .role.tori {
+  color: var(--accent);
+}
+
+.kumite-row .role.uke {
+  color: #2563eb;
+}
+
+[data-theme='dark'] .kumite-row .role.uke {
+  color: #60a5fa;
+}
+
+.formline {
+  font-weight: 700;
+  padding-top: 6px;
+}
+
+/* ---------- Glossary ---------- */
+.gloss-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.gloss-item {
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.gloss-item .term {
+  font-weight: 700;
+}
+
+.gloss-item .mean {
+  color: var(--fg-muted);
+  font-size: 0.92rem;
+}
+
+.empty {
+  text-align: center;
+  color: var(--fg-muted);
+  padding: 40px 16px;
+}
+
+/* ---------- Info ---------- */
+.info h2 {
+  font-size: 1.15rem;
+  margin: 0 0 8px;
+}
+
+.info ul {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+
+.info li {
+  margin: 5px 0;
+}
+
+.search-hint {
+  font-size: 0.78rem;
+  color: var(--fg-muted);
+  margin: 0 4px 8px;
+}
