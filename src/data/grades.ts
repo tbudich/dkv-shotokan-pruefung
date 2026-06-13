@@ -755,3 +755,12 @@ export const danGrades = grades.filter((g) => g.type === 'dan')
 export function getGrade(id: string): Grade | undefined {
   return grades.find((g) => g.id === id)
 }
+
+export function getAdjacentGrades(id: string): { prev?: Grade; next?: Grade } {
+  const i = grades.findIndex((g) => g.id === id)
+  if (i === -1) return {}
+  return {
+    prev: i > 0 ? grades[i - 1] : undefined,
+    next: i < grades.length - 1 ? grades[i + 1] : undefined,
+  }
+}

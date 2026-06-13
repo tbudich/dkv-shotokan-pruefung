@@ -1,23 +1,39 @@
 import { useEffect, useState } from 'react'
 
-type Theme = 'light' | 'dark'
+export type ThemeMode = 'light' | 'dark' | 'system'
+type Effective = 'light' | 'dark'
 
-function initialTheme(): Theme {
+const MEDIA = '(prefers-color-scheme: dark)'
+
+function initialMode(): ThemeMode {
   const stored = localStorage.getItem('theme')
-  if (stored === 'light' || stored === 'dark') return stored
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  if (stored === 'light' || stored === 'dark' || stored === 'system') return stored
+  return 'system'
+}
+
+function apply(effective: Effective) {
+  document.documentElement.setAttribute('data-theme', effective)
+  const meta = document.querySelector('meta[name="theme-color"]')
+  if (meta) meta.setAttribute('content', effective === 'dark' ? '#0f1115' : '#b91c1c')
 }
 
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(initialTheme)
+  const [mode, setMode] = useState<ThemeMode>(initialMode)
 
+  // Persist the mode, apply the effective theme to the document, and — while in
+  // system mode — follow OS scheme changes live.
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme)
-    localStorage.setItem('theme', theme)
-    const meta = document.querySelector('meta[name="theme-color"]')
-    if (meta) meta.setAttribute('content', theme === 'dark' ? '#0f1115' : '#b91c1c')
-  }, [theme])
+    localStorage.setItem('theme', mode)
+    if (mode !== 'system') {
+      apply(mode)
+      return
+    }
+    const mql = window.matchMedia(MEDIA)
+    apply(mql.matches ? 'dark' : 'light')
+    const onChange = () => apply(mql.matches ? 'dark' : 'light')
+    mql.addEventListener('change', onChange)
+    return () => mql.removeEventListener('change', onChange)
+  }, [mode])
 
-  const toggle = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
-  return { theme, toggle }
+  return { mode, setMode }
 }
