@@ -1,23 +1,48 @@
 import { useEffect, useState } from 'react'
 
-type Theme = 'light' | 'dark'
+export type ThemeMode = 'light' | 'dark' | 'system'
+type Effective = 'light' | 'dark'
 
-function initialTheme(): Theme {
+const MEDIA = '(prefers-color-scheme: dark)'
+
+function initialMode(): ThemeMode {
   const stored = localStorage.getItem('theme')
-  if (stored === 'light' || stored === 'dark') return stored
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  if (stored === 'light' || stored === 'dark' || stored === 'system') return stored
+  return 'system'
+}
+
+function resolve(mode: ThemeMode): Effective {
+  if (mode === 'system') {
+    return window.matchMedia(MEDIA).matches ? 'dark' : 'light'
+  }
+  return mode
 }
 
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(initialTheme)
+  const [mode, setMode] = useState<ThemeMode>(initialMode)
+  const [effective, setEffective] = useState<Effective>(() => resolve(initialMode()))
 
+  // Persist the mode and recompute the effective theme when the mode changes.
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme)
-    localStorage.setItem('theme', theme)
-    const meta = document.querySelector('meta[name="theme-color"]')
-    if (meta) meta.setAttribute('content', theme === 'dark' ? '#0f1115' : '#b91c1c')
-  }, [theme])
+    localStorage.setItem('theme', mode)
+    setEffective(resolve(mode))
+  }, [mode])
 
-  const toggle = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
-  return { theme, toggle }
+  // While in system mode, follow OS scheme changes live.
+  useEffect(() => {
+    if (mode !== 'system') return
+    const mql = window.matchMedia(MEDIA)
+    const onChange = () => setEffective(mql.matches ? 'dark' : 'light')
+    mql.addEventListener('change', onChange)
+    return () => mql.removeEventListener('change', onChange)
+  }, [mode])
+
+  // Apply the effective theme to the document + theme-color meta.
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', effective)
+    const meta = document.querySelector('meta[name="theme-color"]')
+    if (meta) meta.setAttribute('content', effective === 'dark' ? '#0f1115' : '#b91c1c')
+  }, [effective])
+
+  return { mode, setMode }
 }

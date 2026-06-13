@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { Belt } from '../components/Belt'
-import { getGrade } from '../data/grades'
+import { getAdjacentGrades, getGrade } from '../data/grades'
 import { parseKihon, type StepDirOrNone } from '../kihon'
 import type { KihonItem, KumiteBlock } from '../types'
 
@@ -105,6 +105,34 @@ function KumiteView({ k }: { k: KumiteBlock }) {
   )
 }
 
+function GradeNav({ id }: { id: string }) {
+  const { prev, next } = getAdjacentGrades(id)
+  return (
+    <nav className="gradenav" aria-label="Grad-Navigation">
+      {prev ? (
+        <Link className="gradenav-btn prev" to={`/grade/${prev.id}`}>
+          <span className="arrow" aria-hidden="true">‹</span>
+          <span className="lbl">{prev.title}</span>
+        </Link>
+      ) : (
+        <span className="gradenav-btn prev disabled" aria-hidden="true">
+          <span className="arrow">‹</span>
+        </span>
+      )}
+      {next ? (
+        <Link className="gradenav-btn next" to={`/grade/${next.id}`}>
+          <span className="lbl">{next.title}</span>
+          <span className="arrow" aria-hidden="true">›</span>
+        </Link>
+      ) : (
+        <span className="gradenav-btn next disabled" aria-hidden="true">
+          <span className="arrow">›</span>
+        </span>
+      )}
+    </nav>
+  )
+}
+
 export function GradeDetailPage() {
   const { id } = useParams()
   const grade = id ? getGrade(id) : undefined
@@ -196,6 +224,9 @@ export function GradeDetailPage() {
           <KumiteView k={grade.kumite} />
         </section>
       )}
+
+      {/* Prev / next grade */}
+      <GradeNav id={grade.id} />
     </div>
   )
 }
