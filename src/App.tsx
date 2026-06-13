@@ -1,4 +1,4 @@
-import { NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { NavLink, Route, Routes, useLocation, useMatch, useNavigate } from 'react-router-dom'
 import { Belt } from './components/Belt'
 import { beltContrast } from './belt'
 import { HomePage } from './pages/HomePage'
@@ -10,9 +10,10 @@ import { getGrade } from './data/grades'
 function AppBar() {
   const location = useLocation()
   const navigate = useNavigate()
+  const match = useMatch('/grade/:id')
 
-  const isDetail = location.pathname.startsWith('/grade/')
-  const detailGrade = isDetail ? getGrade(location.pathname.split('/')[2]) : undefined
+  const isDetail = !!match
+  const detailGrade = match ? getGrade(match.params.id ?? '') : undefined
 
   // Belt-tinted merged header on a resolved grade detail page.
   if (detailGrade) {
