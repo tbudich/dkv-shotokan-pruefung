@@ -738,3 +738,35 @@ button {
   font-weight: 500;
   opacity: 0.85;
 }
+
+/* ---------- Settings button + update status ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+}
+
+.app-version {
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  margin: 0 0 10px;
+}
+
+.update-status {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+}
