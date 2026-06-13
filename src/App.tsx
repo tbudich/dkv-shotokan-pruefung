@@ -6,6 +6,7 @@ import { GradeDetailPage } from './pages/GradeDetailPage'
 import { GlossaryPage } from './pages/GlossaryPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { getGrade } from './data/grades'
+import { useAppUpdate } from './useAppUpdate'
 
 function AppBar() {
   const location = useLocation()
@@ -85,6 +86,9 @@ function TabBar() {
 }
 
 export default function App() {
+  // Registered at the app root so the service worker installs on every load,
+  // not only when the settings page is open.
+  const update = useAppUpdate()
   return (
     <div className="app">
       <AppBar />
@@ -93,7 +97,7 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/grade/:id" element={<GradeDetailPage />} />
           <Route path="/glossar" element={<GlossaryPage />} />
-          <Route path="/info" element={<SettingsPage />} />
+          <Route path="/info" element={<SettingsPage update={update} />} />
           <Route path="*" element={<HomePage />} />
         </Routes>
       </main>

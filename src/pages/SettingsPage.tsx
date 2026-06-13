@@ -1,5 +1,6 @@
 import { infoSections } from '../data/info'
 import { useTheme, type ThemeMode } from '../useTheme'
+import type { AppUpdate } from '../useAppUpdate'
 
 const MODES: { value: ThemeMode; label: string }[] = [
   { value: 'light', label: 'Hell' },
@@ -7,8 +8,14 @@ const MODES: { value: ThemeMode; label: string }[] = [
   { value: 'system', label: 'System' },
 ]
 
-export function SettingsPage() {
+function formatBuildDate(iso: string): string {
+  const [y, m, d] = iso.split('-')
+  return `${d}.${m}.${y}`
+}
+
+export function SettingsPage({ update }: { update: AppUpdate }) {
   const { mode, setMode } = useTheme()
+  const { status, checkForUpdate, applyUpdate } = update
 
   return (
     <div className="info">
@@ -28,6 +35,38 @@ export function SettingsPage() {
               </button>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="card">
+        <h3>App-Version</h3>
+        <div className="card-body">
+          <p className="app-version">
+            Version {__APP_VERSION__} · Stand {formatBuildDate(__BUILD_DATE__)}
+          </p>
+          {status === 'available' ? (
+            <>
+              <p className="bodytext">Neue Version verfügbar.</p>
+              <button type="button" className="btn" onClick={applyUpdate}>
+                Update installieren
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              className="btn"
+              onClick={checkForUpdate}
+              disabled={status === 'checking'}
+            >
+              {status === 'checking' ? 'Suche …' : 'Nach Updates suchen'}
+            </button>
+          )}
+          {status === 'current' && (
+            <p className="update-status">✓ Auf dem neuesten Stand</p>
+          )}
+          {status === 'error' && (
+            <p className="update-status">Prüfung nicht möglich.</p>
+          )}
         </div>
       </section>
 

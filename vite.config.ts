@@ -1,15 +1,21 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import pkg from './package.json'
 
 // Relative base so the app works on GitHub Pages project pages, Netlify,
 // or any sub-path host. Routing uses HashRouter, so deep links work too.
 export default defineConfig({
   base: './',
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+    __BUILD_DATE__: JSON.stringify(new Date().toISOString().slice(0, 10)),
+  },
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
+      injectRegister: false,
       includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'robots.txt'],
       manifest: {
         name: 'DKV Shotokan Prüfungsordnung',
