@@ -11,38 +11,29 @@ function initialMode(): ThemeMode {
   return 'system'
 }
 
-function resolve(mode: ThemeMode): Effective {
-  if (mode === 'system') {
-    return window.matchMedia(MEDIA).matches ? 'dark' : 'light'
-  }
-  return mode
+function apply(effective: Effective) {
+  document.documentElement.setAttribute('data-theme', effective)
+  const meta = document.querySelector('meta[name="theme-color"]')
+  if (meta) meta.setAttribute('content', effective === 'dark' ? '#0f1115' : '#b91c1c')
 }
 
 export function useTheme() {
   const [mode, setMode] = useState<ThemeMode>(initialMode)
-  const [effective, setEffective] = useState<Effective>(() => resolve(initialMode()))
 
-  // Persist the mode and recompute the effective theme when the mode changes.
+  // Persist the mode, apply the effective theme to the document, and — while in
+  // system mode — follow OS scheme changes live.
   useEffect(() => {
     localStorage.setItem('theme', mode)
-    setEffective(resolve(mode))
-  }, [mode])
-
-  // While in system mode, follow OS scheme changes live.
-  useEffect(() => {
-    if (mode !== 'system') return
+    if (mode !== 'system') {
+      apply(mode)
+      return
+    }
     const mql = window.matchMedia(MEDIA)
-    const onChange = () => setEffective(mql.matches ? 'dark' : 'light')
+    apply(mql.matches ? 'dark' : 'light')
+    const onChange = () => apply(mql.matches ? 'dark' : 'light')
     mql.addEventListener('change', onChange)
     return () => mql.removeEventListener('change', onChange)
   }, [mode])
-
-  // Apply the effective theme to the document + theme-color meta.
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', effective)
-    const meta = document.querySelector('meta[name="theme-color"]')
-    if (meta) meta.setAttribute('content', effective === 'dark' ? '#0f1115' : '#b91c1c')
-  }, [effective])
 
   return { mode, setMode }
 }

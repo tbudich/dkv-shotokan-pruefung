@@ -115,8 +115,8 @@ function GradeNav({ id }: { id: string }) {
           <span className="lbl">{prev.title}</span>
         </Link>
       ) : (
-        <span className="gradenav-btn prev disabled" aria-hidden="true">
-          <span className="arrow">‹</span>
+        <span className="gradenav-btn prev disabled" aria-label="Kein vorheriger Grad">
+          <span className="arrow" aria-hidden="true">‹</span>
         </span>
       )}
       {next ? (
@@ -125,8 +125,8 @@ function GradeNav({ id }: { id: string }) {
           <span className="arrow" aria-hidden="true">›</span>
         </Link>
       ) : (
-        <span className="gradenav-btn next disabled" aria-hidden="true">
-          <span className="arrow">›</span>
+        <span className="gradenav-btn next disabled" aria-label="Kein nächster Grad">
+          <span className="arrow" aria-hidden="true">›</span>
         </span>
       )}
     </nav>
