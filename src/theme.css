@@ -111,19 +111,6 @@ button {
   flex: none;
 }
 
-.theme-toggle {
-  background: rgba(255, 255, 255, 0.15);
-  border: none;
-  color: inherit;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  font-size: 1.05rem;
-  display: grid;
-  place-items: center;
-  flex: none;
-}
-
 .content {
   max-width: var(--maxw);
   margin: 0 auto;
@@ -652,4 +639,87 @@ button {
   font-size: 0.78rem;
   color: var(--fg-muted);
   margin: 0 4px 8px;
+}
+
+/* ---------- Grade prev/next nav ---------- */
+.gradenav {
+  position: sticky;
+  bottom: calc(var(--tab-h) + env(safe-area-inset-bottom));
+  z-index: 15;
+  display: flex;
+  gap: 8px;
+  margin: 20px -16px 0;
+  padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+  background: var(--bg-elev);
+  border-top: 1px solid var(--border);
+}
+
+.gradenav-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.gradenav-btn.next {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.gradenav-btn .arrow {
+  font-size: 1.3rem;
+  line-height: 1;
+  color: var(--accent);
+  flex: none;
+}
+
+.gradenav-btn .lbl {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gradenav-btn.disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.gradenav-btn.disabled .arrow {
+  color: var(--fg-muted);
+}
+
+/* ---------- Segmented control (settings) ---------- */
+.segmented {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.segmented .seg {
+  flex: 1;
+  min-height: 40px;
+  padding: 8px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.segmented .seg.active {
+  background: var(--accent);
+  color: var(--accent-contrast);
 }
