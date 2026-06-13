@@ -28,7 +28,7 @@ function AppBar() {
   return (
     <header className="appbar">
       {isDetail && (
-        <button className="back" onClick={() => navigate(-1)} aria-label="Zurück">
+        <button className="back" onClick={() => navigate('/')} aria-label="Zur Gürtel-Übersicht">
           ‹
         </button>
       )}
@@ -44,7 +44,7 @@ function TabBar() {
     <nav className="tabbar">
       <NavLink to="/" end>
         <span className="ico">🥋</span>
-        Grade
+        Gürtel
       </NavLink>
       <NavLink to="/glossar">
         <span className="ico">📖</span>
