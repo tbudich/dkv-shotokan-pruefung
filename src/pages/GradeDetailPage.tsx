@@ -1,5 +1,4 @@
 import { Link, useParams } from 'react-router-dom'
-import { Belt } from '../components/Belt'
 import { getAdjacentGrades, getGrade } from '../data/grades'
 import { parseKihon, type StepDirOrNone } from '../kihon'
 import type { KihonItem, KumiteBlock } from '../types'
@@ -147,16 +146,6 @@ export function GradeDetailPage() {
 
   return (
     <div>
-      <div className="detail-head">
-        <Belt grade={grade} />
-        <div>
-          <h2>{grade.title}</h2>
-          <div className="belt-name">
-            {grade.belt} · {grade.group}
-          </div>
-        </div>
-      </div>
-
       {/* Kihon */}
       {(grade.kihon.length > 0 || grade.kihonNote) && (
         <section className="card">
