@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
-import { Belt } from '../components/Belt'
 import { getAdjacentGrades, getGrade } from '../data/grades'
+import { beltContrast } from '../belt'
 import { parseKihon, type StepDirOrNone } from '../kihon'
 import type { KihonItem, KumiteBlock } from '../types'
 
@@ -110,7 +110,11 @@ function GradeNav({ id }: { id: string }) {
   return (
     <nav className="gradenav" aria-label="Grad-Navigation">
       {prev ? (
-        <Link className="gradenav-btn prev" to={`/grade/${prev.id}`}>
+        <Link
+          className="gradenav-btn prev"
+          to={`/grade/${prev.id}`}
+          style={{ background: prev.beltColor, color: beltContrast(prev.beltColor).fg }}
+        >
           <span className="arrow" aria-hidden="true">‹</span>
           <span className="lbl">{prev.title}</span>
         </Link>
@@ -120,7 +124,11 @@ function GradeNav({ id }: { id: string }) {
         </span>
       )}
       {next ? (
-        <Link className="gradenav-btn next" to={`/grade/${next.id}`}>
+        <Link
+          className="gradenav-btn next"
+          to={`/grade/${next.id}`}
+          style={{ background: next.beltColor, color: beltContrast(next.beltColor).fg }}
+        >
           <span className="lbl">{next.title}</span>
           <span className="arrow" aria-hidden="true">›</span>
         </Link>
@@ -147,16 +155,6 @@ export function GradeDetailPage() {
 
   return (
     <div>
-      <div className="detail-head">
-        <Belt grade={grade} />
-        <div>
-          <h2>{grade.title}</h2>
-          <div className="belt-name">
-            {grade.belt} · {grade.group}
-          </div>
-        </div>
-      </div>
-
       {/* Kihon */}
       {(grade.kihon.length > 0 || grade.kihonNote) && (
         <section className="card">

@@ -1,4 +1,6 @@
-import { NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { NavLink, Route, Routes, useLocation, useMatch, useNavigate } from 'react-router-dom'
+import { Belt } from './components/Belt'
+import { beltContrast } from './belt'
 import { HomePage } from './pages/HomePage'
 import { GradeDetailPage } from './pages/GradeDetailPage'
 import { GlossaryPage } from './pages/GlossaryPage'
@@ -8,8 +10,33 @@ import { getGrade } from './data/grades'
 function AppBar() {
   const location = useLocation()
   const navigate = useNavigate()
+  const match = useMatch('/grade/:id')
 
-  const isDetail = location.pathname.startsWith('/grade/')
+  const isDetail = !!match
+  const detailGrade = match ? getGrade(match.params.id ?? '') : undefined
+
+  // Belt-tinted merged header on a resolved grade detail page.
+  if (detailGrade) {
+    const { fg, isLight } = beltContrast(detailGrade.beltColor)
+    return (
+      <header
+        className={`appbar belt-head${isLight ? ' belt-head--light' : ''}`}
+        style={{ background: detailGrade.beltColor, color: fg }}
+      >
+        <button className="back" onClick={() => navigate('/')} aria-label="Zur Gürtel-Übersicht">
+          ‹
+        </button>
+        <Belt grade={detailGrade} />
+        <div className="head-text">
+          <div className="head-title">{detailGrade.title}</div>
+          <div className="head-sub">
+            {detailGrade.belt} · {detailGrade.group}
+          </div>
+        </div>
+      </header>
+    )
+  }
+
   let title = 'Shotokan Prüfungsordnung'
   let subtitle = '9. Kyu – 8. Dan'
   if (location.pathname.startsWith('/glossar')) {
@@ -19,10 +46,9 @@ function AppBar() {
     title = 'Einstellung'
     subtitle = 'Darstellung & Grundsätze'
   } else if (isDetail) {
-    const id = location.pathname.split('/')[2]
-    const g = getGrade(id)
-    title = g ? g.title : 'Grad'
-    subtitle = g ? g.belt : ''
+    // Detail route but grade id not found.
+    title = 'Grad'
+    subtitle = ''
   }
 
   return (

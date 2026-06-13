@@ -270,29 +270,6 @@ button {
   flex: none;
 }
 
-/* ---------- Detail ---------- */
-.detail-head {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 6px;
-}
-
-.detail-head .belt {
-  width: 54px;
-  height: 54px;
-}
-
-.detail-head h2 {
-  margin: 0;
-  font-size: 1.4rem;
-}
-
-.detail-head .belt-name {
-  color: var(--fg-muted);
-  font-size: 0.9rem;
-}
-
 .card {
   background: var(--bg-elev);
   border: 1px solid var(--border);
@@ -678,7 +655,7 @@ button {
 .gradenav-btn .arrow {
   font-size: 1.3rem;
   line-height: 1;
-  color: var(--accent);
+  color: inherit;
   flex: none;
 }
 
@@ -722,4 +699,42 @@ button {
 .segmented .seg.active {
   background: var(--accent);
   color: var(--accent-contrast);
+}
+
+/* ---------- Belt-colored detail header ---------- */
+/* Background + text color are set inline (belt color + contrast ink). */
+.appbar.belt-head .back {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.appbar.belt-head--light {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.appbar.belt-head--light .back {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.appbar.belt-head .belt {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  font-size: 0.8rem;
+}
+
+.appbar .head-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.appbar .head-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.appbar .head-sub {
+  font-size: 0.72rem;
+  font-weight: 500;
+  opacity: 0.85;
 }
