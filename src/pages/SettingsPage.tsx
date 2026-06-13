@@ -1,6 +1,6 @@
 import { infoSections } from '../data/info'
 import { useTheme, type ThemeMode } from '../useTheme'
-import { useAppUpdate } from '../useAppUpdate'
+import type { AppUpdate } from '../useAppUpdate'
 
 const MODES: { value: ThemeMode; label: string }[] = [
   { value: 'light', label: 'Hell' },
@@ -13,9 +13,9 @@ function formatBuildDate(iso: string): string {
   return `${d}.${m}.${y}`
 }
 
-export function SettingsPage() {
+export function SettingsPage({ update }: { update: AppUpdate }) {
   const { mode, setMode } = useTheme()
-  const { status, checkForUpdate, applyUpdate } = useAppUpdate()
+  const { status, checkForUpdate, applyUpdate } = update
 
   return (
     <div className="info">
