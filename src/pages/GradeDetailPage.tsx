@@ -229,8 +229,11 @@ export function GradeDetailPage() {
         </section>
       )}
 
-      {/* Prev / next grade */}
-      <GradeNav id={grade.id} />
+      {/* Prev / next grade. Keyed by id so the sticky footer fully remounts on
+          navigation — iOS WebKit does not repaint a `position: sticky` bottom
+          element when only its contents change, leaving stale prev/next labels.
+          Remounting hands it a fresh DOM node, forcing a clean paint. */}
+      <GradeNav key={grade.id} id={grade.id} />
     </div>
   )
 }
