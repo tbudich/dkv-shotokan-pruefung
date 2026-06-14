@@ -1,6 +1,7 @@
 import { infoSections } from '../data/info'
 import { useTheme, type ThemeMode } from '../useTheme'
 import type { AppUpdate } from '../useAppUpdate'
+import { useInstallPrompt, chromeIntentUrl } from '../useInstallPrompt'
 
 const MODES: { value: ThemeMode; label: string }[] = [
   { value: 'light', label: 'Hell' },
@@ -16,6 +17,7 @@ function formatBuildDate(iso: string): string {
 export function SettingsPage({ update }: { update: AppUpdate }) {
   const { mode, setMode } = useTheme()
   const { status, checkForUpdate, applyUpdate } = update
+  const { state: installState, promptInstall } = useInstallPrompt()
 
   return (
     <div className="info">
@@ -37,6 +39,45 @@ export function SettingsPage({ update }: { update: AppUpdate }) {
           </div>
         </div>
       </section>
+
+      {installState !== 'installed' && installState !== 'checking' && (
+        <section className="card">
+          <h3>App installieren</h3>
+          <div className="card-body">
+            {installState === 'available' && (
+              <button type="button" className="btn" onClick={promptInstall}>
+                Auf Homebildschirm installieren
+              </button>
+            )}
+            {installState === 'samsung' && (
+              <>
+                <p className="bodytext">
+                  Tipp: in Chrome installieren – das erstellt eine verifizierte
+                  App und vermeidet die Play-Protect-Warnung.
+                </p>
+                {/* link, not a button: the intent URL navigates and Android
+                    hands off to Chrome (same tab, so it isn't target=_blank). */}
+                <a className="btn" href={chromeIntentUrl()}>
+                  In Chrome öffnen
+                </a>
+              </>
+            )}
+            {installState === 'ios' && (
+              <p className="bodytext">
+                Zum Installieren in Safari: Teilen-Symbol antippen und „Zum
+                Home-Bildschirm" wählen.
+              </p>
+            )}
+            {installState === 'unsupported' && (
+              <p className="bodytext">
+                Zum Installieren das Browser-Menü öffnen und „Zum
+                Startbildschirm hinzufügen" wählen. Für eine verifizierte
+                Installation die Seite in Chrome öffnen.
+              </p>
+            )}
+          </div>
+        </section>
+      )}
 
       <section className="card">
         <h3>App-Version</h3>

@@ -1,7 +1,7 @@
 {
   "name": "dkv-shotokan-pruefung",
   "private": true,
-  "version": "1.0.4",
+  "version": "1.0.5",
   "type": "module",
   "description": "Mobile-optimierte PWA der DKV Shotokan Prüfungsordnung (9. Kyu bis 8. Dan)",
   "scripts": {
