@@ -3,27 +3,35 @@ import { test, expect } from '@playwright/test'
 const EXPECTED_COMMIT = process.env.EXPECTED_COMMIT
 
 test.describe('deployment', () => {
-  test('serves version.json for the expected build', async ({ request }) => {
-    if (EXPECTED_COMMIT) {
-      // Ride out Pages/CDN propagation: poll until the live commit matches.
-      await expect
-        .poll(
-          async () => {
-            const res = await request.get('version.json')
-            if (!res.ok()) return null
-            return (await res.json()).commit
-          },
-          { timeout: 90_000, intervals: [2_000, 5_000, 10_000] },
-        )
-        .toBe(EXPECTED_COMMIT)
-    } else {
-      const res = await request.get('version.json')
-      expect(res.ok()).toBeTruthy()
-      const json = await res.json()
-      expect(json.commit).toMatch(/^[0-9a-f]{40}$/)
-      expect(typeof json.version).toBe('string')
-      expect(json.version.length).toBeGreaterThan(0)
-    }
+  // The freshness poll can run up to ~90s during Pages/CDN propagation. The
+  // default 30s test timeout would otherwise cut the poll short, and a stale
+  // deploy that hasn't propagated within one poll won't within a retried one —
+  // so give this test room and don't retry it.
+  test.describe('freshness', () => {
+    test.describe.configure({ retries: 0 })
+
+    test('serves version.json for the expected build', async ({ request }) => {
+      test.setTimeout(120_000)
+      if (EXPECTED_COMMIT) {
+        await expect
+          .poll(
+            async () => {
+              const res = await request.get('version.json')
+              if (!res.ok()) return null
+              return (await res.json()).commit
+            },
+            { timeout: 90_000, intervals: [2_000, 5_000, 10_000] },
+          )
+          .toBe(EXPECTED_COMMIT)
+      } else {
+        const res = await request.get('version.json')
+        expect(res.ok()).toBeTruthy()
+        const json = await res.json()
+        expect(json.commit).toMatch(/^[0-9a-f]{40}$/)
+        expect(typeof json.version).toBe('string')
+        expect(json.version.length).toBeGreaterThan(0)
+      }
+    })
   })
 
   test('home page renders grades', async ({ page }) => {
@@ -34,6 +42,9 @@ test.describe('deployment', () => {
 
   test('Einstellung surfaces the app version', async ({ page, request }) => {
     const json = await (await request.get('version.json')).json()
+    // When the expected commit is known (CI), make sure we're reading the new
+    // build's version, not a pre-propagation one.
+    if (EXPECTED_COMMIT) expect(json.commit).toBe(EXPECTED_COMMIT)
     await page.goto('#/info')
     const versionLine = page.locator('.app-version')
     await expect(versionLine).toBeVisible()
