@@ -18,7 +18,13 @@ test.describe('deployment', () => {
             async () => {
               const res = await request.get('version.json')
               if (!res.ok()) return null
-              return (await res.json()).commit
+              // A CDN edge can briefly serve a non-JSON 200 during propagation;
+              // treat a parse failure as "not ready yet" and keep polling.
+              try {
+                return (await res.json()).commit
+              } catch {
+                return null
+              }
             },
             { timeout: 90_000, intervals: [2_000, 5_000, 10_000] },
           )
@@ -41,10 +47,9 @@ test.describe('deployment', () => {
   })
 
   test('Einstellung surfaces the app version', async ({ page, request }) => {
+    // Commit freshness is gated by the dedicated test above; here we only check
+    // that the UI renders the version that version.json reports.
     const json = await (await request.get('version.json')).json()
-    // When the expected commit is known (CI), make sure we're reading the new
-    // build's version, not a pre-propagation one.
-    if (EXPECTED_COMMIT) expect(json.commit).toBe(EXPECTED_COMMIT)
     await page.goto('#/info')
     const versionLine = page.locator('.app-version')
     await expect(versionLine).toBeVisible()

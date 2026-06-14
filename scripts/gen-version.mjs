@@ -7,7 +7,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
 
 function commit() {
-  if (process.env.GITHUB_SHA) return process.env.GITHUB_SHA
+  if (process.env.GITHUB_SHA) return process.env.GITHUB_SHA.trim()
   try {
     return execSync('git rev-parse HEAD', { cwd: root }).toString().trim()
   } catch {

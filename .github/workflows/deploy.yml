@@ -50,6 +50,10 @@ jobs:
   verify:
     needs: deploy
     runs-on: ubuntu-latest
+    # Only needs to checkout and make outbound HTTP requests; drop the
+    # workflow-level pages:write / id-token:write.
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
