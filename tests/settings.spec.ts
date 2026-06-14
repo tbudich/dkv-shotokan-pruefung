@@ -16,6 +16,10 @@ test.describe('settings buttons', () => {
   test('System theme button activates system mode', async ({ page }) => {
     await page.emulateMedia({ colorScheme: 'light' })
     await page.goto('#/info')
+    // Put the app into a known non-system state so the System click provably changes it.
+    await page.getByRole('button', { name: 'Dunkel' }).click()
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+
     const system = page.getByRole('button', { name: 'System' })
     await system.click()
     await expect(system).toHaveAttribute('aria-pressed', 'true')
