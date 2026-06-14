@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
+    "pretest:e2e": "npm run build",
     "test:e2e": "playwright test",
     "verify:deploy": "playwright test -c playwright.deploy.config.ts",
     "typecheck:test": "tsc -p tsconfig.vitest.json",

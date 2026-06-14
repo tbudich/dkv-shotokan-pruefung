@@ -20,7 +20,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  # Lint, unit tests, build, and hermetic e2e — all against a single build of
+  # the app, which is then uploaded as the Pages artifact. Tests gate the deploy:
+  # if any step fails, `deploy` never runs. The build happens exactly once here
+  # (the Playwright webServer only previews this dist, it does not rebuild).
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,14 +33,20 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run lint
+      - run: npm run test
+      - run: npx playwright install --with-deps chromium
       - run: npm run build
+      # Run Playwright directly (not `npm run test:e2e`) so the `pretest:e2e`
+      # build hook is skipped — we reuse the dist built in the step above.
+      - run: npx playwright test
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
-    needs: build
+    needs: test
     runs-on: ubuntu-latest
     outputs:
       page_url: ${{ steps.deployment.outputs.page_url }}
