@@ -1,17 +1,20 @@
 import { defineConfig, devices } from '@playwright/test'
 
-// Defaults to the live GitHub Pages URL; override with DEPLOY_URL for a local
-// preview (e.g. http://localhost:4173/). The trailing slash matters: tests use
-// relative paths so the Pages sub-path is preserved.
-const DEPLOY_URL =
-  process.env.DEPLOY_URL ?? 'https://tbudich.github.io/dkv-shotokan-pruefung/'
-
+// Hermetic interaction tests: build the app and serve the production preview
+// locally, then drive it. Deploy smoke tests live in playwright.deploy.config.ts.
 export default defineConfig({
   testDir: 'tests',
+  testIgnore: ['**/deploy.spec.ts'],
   retries: 2,
   reporter: 'list',
   use: {
-    baseURL: DEPLOY_URL,
+    baseURL: 'http://localhost:4173/',
+  },
+  webServer: {
+    command: 'npm run build && npx vite preview --port 4173 --strictPort',
+    url: 'http://localhost:4173/',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 })
