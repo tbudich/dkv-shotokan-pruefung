@@ -7,6 +7,11 @@ dist-ssr
 *.tsbuildinfo
 .superpowers/
 
+# generated deploy manifest + e2e artifacts
+public/version.json
+test-results/
+playwright-report/
+
 # logs
 npm-debug.log*
 yarn-debug.log*
