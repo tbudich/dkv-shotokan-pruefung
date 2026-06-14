@@ -13,7 +13,8 @@
     "coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "verify:deploy": "playwright test -c playwright.deploy.config.ts",
-    "lint": "tsc --noEmit"
+    "typecheck:test": "tsc -p tsconfig.vitest.json",
+    "lint": "tsc --noEmit && tsc -p tsconfig.vitest.json"
   },
   "dependencies": {
     "react": "^18.3.1",
