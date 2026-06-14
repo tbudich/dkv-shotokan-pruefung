@@ -2,7 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import { getAdjacentGrades, getGrade } from '../data/grades'
 import { beltContrast } from '../belt'
 import { parseKihon, type StepDirOrNone } from '../kihon'
-import type { KihonItem, KumiteBlock } from '../types'
+import type { KihonItem, KumiteBlock, KumiteRow } from '../types'
 
 const DIR_META: Record<StepDirOrNone, { arrow: string; label: string }> = {
   vor: { arrow: '→', label: 'Schritt vorwärts' },
@@ -68,29 +68,90 @@ function KihonTable({ items }: { items: KihonItem[] }) {
   )
 }
 
+const SETUP_ASPECTS = new Set(['Ausgangsstellung', 'Bewegung'])
+
+/** Split Kumite rows into setup context vs. the technique sequence. */
+function splitRows(rows: KumiteRow[] = []) {
+  const setup = rows.filter((r) => SETUP_ASPECTS.has(r.aspect))
+  const sequence = rows.filter((r) => !SETUP_ASPECTS.has(r.aspect))
+  return { setup, sequence }
+}
+
+/** Jiyu-style forms: every exchange leaves the defense free ("frei"). */
+function isFreeDefense(sequence: KumiteRow[]) {
+  return sequence.length > 0 && sequence.every((r) => r.uke.trim().toLowerCase() === 'frei')
+}
+
+/** Exchange forms sometimes pack a counter into the Uke cell (e.g. "Age-Uke / Gyaku-Zuki"). */
+function ukeThreadLabel(uke: string) {
+  return uke.includes('/') ? 'Uke · Abwehr / Konter' : 'Uke · Abwehr'
+}
+
+function KumiteSetup({ rows }: { rows: KumiteRow[] }) {
+  if (rows.length === 0) return null
+  return (
+    <div className="kumite-setup">
+      {rows.map((r, i) => (
+        <div className="su-row" key={i}>
+          <span className="su-k">{r.aspect}</span>
+          <span className="su-v">
+            <span className="txt-tori">{r.tori}</span>
+            <span className="su-sep" aria-hidden="true">·</span>
+            <span className="txt-uke">{r.uke}</span>
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function KumiteThread({ rows }: { rows: KumiteRow[] }) {
+  return (
+    <div className="kumite-thread">
+      {rows.map((r, i) => (
+        <div className="kt-ex" key={i}>
+          <div className="kt-bub kt-tori">
+            <span className="role tori">Tori · Angriff {i + 1}</span>
+            {r.tori}
+          </div>
+          <div className="kt-bub kt-uke">
+            <span className="role uke">{ukeThreadLabel(r.uke)}</span>
+            {r.uke}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function KumiteFreeDefense({ rows }: { rows: KumiteRow[] }) {
+  return (
+    <div className="kumite-free">
+      <div className="kf-box kf-tori">
+        <span className="role tori">Tori · Angriffe (nacheinander)</span>
+        <ol>
+          {rows.map((r, i) => (
+            <li key={i}>{r.tori}</li>
+          ))}
+        </ol>
+      </div>
+      <div className="kf-box kf-uke">
+        <span className="role uke">Uke · Abwehr &amp; Gegenangriff</span>
+        <strong>{rows[0].uke}</strong>
+      </div>
+    </div>
+  )
+}
+
 function KumiteView({ k }: { k: KumiteBlock }) {
+  const { setup, sequence } = splitRows(k.rows)
+  const free = isFreeDefense(sequence)
   return (
     <div className="card-body">
       {k.form && <div className="formline">{k.form}</div>}
-      {k.rows && k.rows.length > 0 && (
-        <div className="kumite-rows">
-          {k.rows.map((r, i) => (
-            <div className="kumite-row" key={i}>
-              <div className="aspect">{r.aspect}</div>
-              <div className="pair">
-                <div className="cell">
-                  <span className="role tori">Tori (Angreifer)</span>
-                  {r.tori}
-                </div>
-                <div className="cell">
-                  <span className="role uke">Uke (Verteidiger)</span>
-                  {r.uke}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      <KumiteSetup rows={setup} />
+      {sequence.length > 0 &&
+        (free ? <KumiteFreeDefense rows={sequence} /> : <KumiteThread rows={sequence} />)}
       {k.note && <p className="note inset">{k.note}</p>}
       {k.extra && k.extra.length > 0 && (
         <div className="chips">
