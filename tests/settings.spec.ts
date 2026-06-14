@@ -13,6 +13,15 @@ test.describe('settings buttons', () => {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
   })
 
+  test('System theme button activates system mode', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'light' })
+    await page.goto('#/info')
+    const system = page.getByRole('button', { name: 'System' })
+    await system.click()
+    await expect(system).toHaveAttribute('aria-pressed', 'true')
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+  })
+
   test('update button settles into a terminal state (best-effort)', async ({ page }) => {
     await page.goto('#/info')
     const check = page.getByRole('button', { name: /Nach Updates suchen/ })
