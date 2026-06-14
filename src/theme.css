@@ -660,9 +660,33 @@ button {
 }
 
 .gradenav-btn .lbl {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.gradenav-btn.next .lbl {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.gradenav-btn .g-title {
+  font-weight: 700;
+  line-height: 1.15;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.gradenav-btn .g-belt {
+  font-size: 0.66rem;
+  font-weight: 600;
+  opacity: 0.85;
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 .gradenav-btn.disabled {

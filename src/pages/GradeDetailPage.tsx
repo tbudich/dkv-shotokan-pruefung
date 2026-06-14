@@ -116,7 +116,10 @@ function GradeNav({ id }: { id: string }) {
           style={{ background: prev.beltColor, color: beltContrast(prev.beltColor).fg }}
         >
           <span className="arrow" aria-hidden="true">‹</span>
-          <span className="lbl">{prev.title}</span>
+          <span className="lbl">
+            <span className="g-title">{prev.title}</span>
+            <span className="g-belt">{prev.belt}</span>
+          </span>
         </Link>
       ) : (
         <span className="gradenav-btn prev disabled" aria-label="Kein vorheriger Grad">
@@ -129,7 +132,10 @@ function GradeNav({ id }: { id: string }) {
           to={`/grade/${next.id}`}
           style={{ background: next.beltColor, color: beltContrast(next.beltColor).fg }}
         >
-          <span className="lbl">{next.title}</span>
+          <span className="lbl">
+            <span className="g-title">{next.title}</span>
+            <span className="g-belt">{next.belt}</span>
+          </span>
           <span className="arrow" aria-hidden="true">›</span>
         </Link>
       ) : (
